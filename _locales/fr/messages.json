@@ -1,0 +1,148 @@
+{
+  "app_name": {
+    "message": "Amplificateur de son jusqu'à 600%"
+  },
+  "app_description": {
+    "message": "Amplifiez le volume jusqu'à 600 %, personnalisez les préréglages EQ, basculez les appareils de sortie par onglet, avec visualiseurs et raccourcis."
+  },
+  "volume_control": {
+    "message": "Contrôle du Volume"
+  },
+  "audio_profile": {
+    "message": "Profil Audio"
+  },
+  "output_device": {
+    "message": "Appareil de Sortie"
+  },
+  "configuration": {
+    "message": "Configuration"
+  },
+  "scroll_adjust": {
+    "message": "Ajustement du Défilement"
+  },
+  "device_safety": {
+    "message": "Sécurité des Appareils"
+  },
+  "audio_analyzer": {
+    "message": "Audio Analyzer",
+    "description": "Toggle audio frequency visualization"
+  },
+  "shortcuts": {
+    "message": "Keyboard Shortcuts",
+    "description": "Volume control shortcuts"
+  },
+  "toggle_theme": {
+    "message": "Toggle Theme"
+  },
+  "help": {
+    "message": "Help"
+  },
+  "advanced_settings": {
+    "message": "Advanced Settings"
+  },
+  "restore_volume": {
+    "message": "Restore saved volume for this website"
+  },
+  "save_profile": {
+    "message": "Save current settings for this website"
+  },
+  "save_speaker": {
+    "message": "Save this speaker for this tab"
+  },
+  "refresh_devices": {
+    "message": "Refresh device list"
+  },
+  "loading_devices": {
+    "message": "Loading Devices..."
+  },
+  "signal_before": {
+    "message": "Signal Before"
+  },
+  "frequency_analyzer": {
+    "message": "Frequency Analyzer"
+  },
+  "created_by": {
+    "message": "Created by"
+  },
+  "scroll_adjust_title": {
+    "message": "Allows you to change slider values by scrolling with your mouse wheel."
+  },
+  "device_safety_title": {
+    "message": "Automatically lowers volume to a safe level when switching output devices."
+  },
+  "audio_analyzer_title": {
+    "message": "Show audio frequency analyzer visualization."
+  },
+  "help_title": {
+    "message": "Supbyte Sound Booster Help"
+  },
+  "help_welcome": {
+    "message": "Welcome to Sound Booster! Enhance your audio experience with powerful controls. Let's get you started with the basics."
+  },
+  "help_main_controls": {
+    "message": "Main Controls"
+  },
+  "help_volume_slider": {
+    "message": "Volume Slider"
+  },
+  "help_volume_desc": {
+    "message": "Adjust the volume from 0% to 600% to boost or reduce audio levels for clearer, louder sound."
+  },
+  "help_audio_profile": {
+    "message": "Audio Profile"
+  },
+  "help_profile_desc": {
+    "message": "Choose from presets like Flat, Voice, Bass, or Treble. Use the save button (✔️) to remember your settings for this site."
+  },
+  "help_output_device": {
+    "message": "Output Device"
+  },
+  "help_device_desc": {
+    "message": "Select your preferred speaker or audio device. Volume auto-adjusts for safety when switching; save your choice per tab with the ✔️ button."
+  },
+  "volume_reduced": {
+    "message": "Volume reduced while switching devices"
+  },
+  "device_saved": {
+    "message": "Device preference saved. To change audio output, select the device in your browser's audio settings."
+  },
+  "enjoy_message": {
+    "message": "Enjoying Supbyte? Consider leaving a review!"
+  },
+  "high_volume_warning": {
+    "message": "High volume can damage hearing."
+  },
+  "no_devices": {
+    "message": "No devices found"
+  },
+  "permission_needed": {
+    "message": "Permission needed"
+  },
+  "load_error": {
+    "message": "Could not load tab info."
+  },
+  "no_active_audio": {
+    "message": "No active audio tabs found."
+  },
+  "active_audio": {
+    "message": "Active Audio"
+  },
+  "refresh_tab_list": {
+    "message": "Refresh Tab List"
+  },
+  "loading": {
+    "message": "Loading..."
+  },
+  "flat_preset": {
+    "message": "Flat"
+  },
+  "voice_preset": {
+    "message": "Voice"
+  },
+  "bass_preset": {
+    "message": "Bass"
+  },
+  "treble_preset": {
+    "message": "Treble"
+  }
+}

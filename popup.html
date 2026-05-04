@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Supbyte Sound Booster</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div id="error-container" class="hidden"></div>
+    <div class="container">
+        <header class="header">
+            <h1 class="title" data-i18n="supbyte">Supbyte</h1>
+            <div class="header-buttons">
+                <button id="theme-toggle-btn" class="icon-btn" data-i18n-title="toggle_theme" title="Toggle Theme"></button>
+                <button id="help-btn" class="icon-btn" data-i18n-title="help" title="Help">?</button>
+                <button id="settings-toggle-btn" class="icon-btn" data-i18n-title="advanced_settings" title="Advanced Settings">⚙️</button>
+            </div>
+        </header>
+
+        <div class="content-main">
+
+
+            <div class="control-section">
+                <h2 class="control-label" data-i18n="volume_control">Volume Control</h2>
+                <div class="volume-display">
+                    <span id="volume-level">100</span>%
+                    <button id="restore-volume-btn" class="icon-btn" data-i18n-title="restore_volume" title="Restore saved volume for this website">🔄</button>
+                </div>
+                <div id="volume-warning-line" class="hidden"></div>
+                <div id="device-safety-message" class="safety-message"></div>
+                <input type="range" id="volume-slider" class="volume-slider-control" min="0" max="600" step="5" value="100">
+            </div>
+            <div class="control-section">
+                <h2 class="control-label" data-i18n="audio_profile">Audio Profile</h2>
+                <div class="control-group">
+                    <button class="preset-btn active" data-preset="flat" data-i18n="flat_preset">Flat</button>
+                    <button class="preset-btn" data-preset="voice" data-i18n="voice_preset">Voice</button>
+                    <button class="preset-btn" data-preset="bass" data-i18n="bass_preset">Bass</button>
+                    <button class="preset-btn" data-preset="treble" data-i18n="treble_preset">Treble</button>
+                    <button id="save-site-profile-btn" class="icon-btn" data-i18n-title="save_profile" title="Save current settings for this website">✔️</button>
+                </div>
+            </div>
+            <div class="control-section">
+                <h2 class="control-label" data-i18n="output_device">Output Device</h2>
+                <div class="control-group">
+                    <div class="custom-dropdown" id="speaker-dropdown-container">
+                         <div class="dropdown-selected" id="speaker-selected" data-value="default" tabindex="0" aria-haspopup="listbox" aria-expanded="false"><span data-i18n="loading_devices">Loading Devices...</span></div>
+                        <ul class="dropdown-options" id="speaker-options" role="listbox"></ul>
+                    </div>
+                    <button id="save-speaker-btn" class="icon-btn" data-i18n-title="save_speaker" title="Save this speaker for this tab">✔️</button>
+                    <button id="refresh-speakers-btn" class="icon-btn" data-i18n-title="refresh_devices" title="Refresh device list">🔄️</button>
+                </div>
+            </div>
+            
+            <!-- Visual Frequency Analyzer (Sound Booster Style) -->
+            <div class="audio-analyzer-container" id="audio-analyzer-container" style="display: none;">
+                <div class="analyzer-section">
+                    <h3 class="analyzer-title" data-i18n="signal_before">Signal Before</h3>
+                    <div class="analyzer-wrapper">
+                        <canvas id="analyzer-before" class="frequency-canvas" width="280" height="60"></canvas>
+                        <div class="freq-labels">
+                            <span class="freq-start">0 Hz</span>
+                            <span class="freq-end" id="before-freq-end">22050</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="analyzer-section">
+                    <h3 class="analyzer-title" data-i18n="frequency_analyzer">Frequency Analyzer</h3>
+                    <div class="analyzer-wrapper">
+                        <canvas id="analyzer-after" class="frequency-canvas" width="280" height="60"></canvas>
+                        <div class="freq-labels">
+                            <span class="freq-start">0 Hz</span>
+                            <span class="freq-end" id="after-freq-end">22050</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="active-audio-container" id="audio-hub-container"></div>
+            <footer class="footer">
+                <div id="message-container"></div>
+                <div class="footer-credit"><span data-i18n="created_by">Created by</span> <a href="https://supbyte.com/" target="_blank">Supbyte</a></div>
+            </footer>
+        </div>
+
+        <div class="content-settings is-hidden">
+            <div class="advanced-scroll-container">
+                <div class="advanced-section configuration-section">
+                     <div class="adv-section-header"><h3 data-i18n="configuration">Configuration</h3></div>
+                    <div class="config-grid">
+                        <div class="config-item"><label for="scroll-adjust-toggle" data-i18n-title="scroll_adjust_title" title="Allows you to change slider values by scrolling with your mouse wheel." data-i18n="scroll_adjust">Scroll Adjust</label><label class="switch"><input type="checkbox" id="scroll-adjust-toggle"><span class="toggle-slider"></span></label></div>
+                        <div class="config-item"><label for="device-safety-toggle" data-i18n-title="device_safety_title" title="Automatically lowers volume to a safe level when switching output devices." data-i18n="device_safety">Device Safety</label><label class="switch"><input type="checkbox" id="device-safety-toggle"><span class="toggle-slider"></span></label></div>
+                        <div class="config-item"><label for="analyzer-toggle" data-i18n-title="audio_analyzer_title" title="Show audio frequency analyzer visualization." data-i18n="audio_analyzer">Audio Analyzer</label><label class="switch"><input type="checkbox" id="analyzer-toggle"><span class="toggle-slider"></span></label></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="help-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="modal-close-btn">&times;</span>
+            <h2 data-i18n="help_title">Supbyte Sound Booster Help</h2>
+            <p data-i18n="help_welcome">Welcome to Sound Booster! Enhance your audio experience with powerful controls. Let's get you started with the basics.</p>
+            <h3 data-i18n="help_main_controls">Main Controls</h3>
+            <ul>
+                <li><strong data-i18n="help_volume_slider">Volume Slider:</strong> <span data-i18n="help_volume_desc">Adjust the volume from 0% to 600% to boost or reduce audio levels for clearer, louder sound.</span></li>
+                <li><strong data-i18n="help_audio_profile">Audio Profile:</strong> <span data-i18n="help_profile_desc">Choose from presets like Flat, Voice, Bass, or Treble. Use the save button (✔️) to remember your settings for this site.</span></li>
+                <li><strong data-i18n="help_output_device">Output Device:</strong> <span data-i18n="help_device_desc">Select your preferred speaker or audio device. Volume auto-adjusts for safety when switching; save your choice per tab with the ✔️ button.</span></li>
+            </ul>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
