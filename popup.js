@@ -443,7 +443,10 @@ async function renderFooterPanels() {
                 const tabItem = document.createElement('div');
                 tabItem.className = 'tab-item';
                 if (tab.id === currentTab.id) tabItem.classList.add('current-tab-in-hub');
-                tabItem.innerHTML = `<img src="${tab.favIconUrl || 'icon16.png'}" class="tab-favicon"><span class="tab-title">${tab.title}</span>`;
+                // Titles and favicon URLs are page-controlled, so never interpolate them into HTML.
+                const favicon = Object.assign(document.createElement('img'), { src: tab.favIconUrl || 'icon16.png', className: 'tab-favicon' });
+                const title = Object.assign(document.createElement('span'), { textContent: tab.title, className: 'tab-title' });
+                tabItem.append(favicon, title);
                 tabItem.addEventListener('click', () => { if (tab.id !== currentTab.id) { chrome.tabs.update(tab.id, { active: true }); window.close(); } });
                 tabList.appendChild(tabItem);
             });
@@ -511,7 +514,9 @@ async function populateSpeakers(selectedId) {
             const li = document.createElement('li');
             li.dataset.value = device.deviceId;
             const icon = getDeviceIcon(device.label);
-            li.innerHTML = `<span class="icon">${icon}</span><span>${device.label || `Speaker ${options.children.length + 1}`}</span>`;
+            const iconSpan = Object.assign(document.createElement('span'), { className: 'icon', textContent: icon });
+            const labelSpan = Object.assign(document.createElement('span'), { textContent: device.label || `Speaker ${options.children.length + 1}` });
+            li.append(iconSpan, labelSpan);
             li.setAttribute('role', 'option');
             if (device.deviceId === selectedId) {
                 li.classList.add('selected');

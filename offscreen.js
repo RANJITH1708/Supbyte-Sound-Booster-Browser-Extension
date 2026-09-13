@@ -31,15 +31,12 @@ async function createAudioGraph(tabId, streamId, settings, deviceId) {
     console.log(`[OFFSCREEN] CREATE_GRAPH called for tabId: ${tabId}. DeviceId: ${deviceId}`, { settings });
     if (audioGraphs.has(tabId)) {
         console.warn(`[OFFSCREEN] Graph for tabId: ${tabId} already exists. Removing old one.`);
-        removeAudioGraph(tabId);
+        await removeAudioGraph(tabId);
     }
 
     try {
         // Get shared AudioContext
         const context = getSharedAudioContext();
-        if (context.state === 'suspended') {
-            await context.resume();
-        }
         console.log(`[OFFSCREEN] Using shared AudioContext for tabId: ${tabId}, state: ${context.state}`);
 
         // Capture media stream
@@ -110,6 +107,9 @@ async function createAudioGraph(tabId, streamId, settings, deviceId) {
         };
 
         audioGraphs.set(tabId, graphNodes);
+        // Resume only once registered: a removal finishing meanwhile suspends the context
+        // only while the map is empty, so this resume always lands after its suspend.
+        await context.resume();
         console.log(`[OFFSCREEN] Graph created for tabId: ${tabId}. Applying settings...`);
 
         // Apply initial settings
@@ -132,6 +132,8 @@ async function removeAudioGraph(tabId) {
     console.log(`[OFFSCREEN] REMOVE_GRAPH called for tabId: ${tabId}.`);
     const graph = audioGraphs.get(tabId);
     if (graph) {
+        // Unregister before the fade, or a graph created for this tab meanwhile gets deleted with it.
+        audioGraphs.delete(tabId);
         // Fade out over 50ms
         const now = graph.context.currentTime;
         graph.gainNode.gain.setValueAtTime(graph.gainNode.gain.value, now);
@@ -166,15 +168,12 @@ async function removeAudioGraph(tabId) {
             console.warn(`[OFFSCREEN] Error cleaning up player: ${e.message}`);
         }
 
-        // Remove from storage
-        audioGraphs.delete(tabId);
         console.log(`[OFFSCREEN] Cleanup complete for tabId: ${tabId}.`);
 
-        // Close shared AudioContext if no graphs remain
-        if (audioGraphs.size === 0 && sharedAudioContext && sharedAudioContext.state !== 'closed') {
-            console.log('[OFFSCREEN] Last graph removed. Closing shared AudioContext.');
-            sharedAudioContext.close();
-            sharedAudioContext = null;
+        // Suspend, don't close: closing killed the context under graphs still being created.
+        if (audioGraphs.size === 0) {
+            console.log('[OFFSCREEN] Last graph removed. Suspending shared AudioContext.');
+            graph.context.suspend();
         }
     } else {
         console.warn(`[OFFSCREEN] removeAudioGraph called for tabId ${tabId}, but no graph found.`);

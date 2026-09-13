@@ -113,7 +113,7 @@ async function startBoostingTab(tabId) {
         console.error(`[background.js] Failed to start boosting tab ${tabId}:`, error.message);
         await removeBoostedTab(tabId);
         updateBadge(tabId, '');
-        try { chrome.runtime.sendMessage({ type: 'CAPTURE_FAILED', tabId, error: error.message }); } catch(e) {}
+        chrome.runtime.sendMessage({ type: 'CAPTURE_FAILED', tabId, error: error.message }).catch(() => {});
     }
 }
 
@@ -122,9 +122,7 @@ async function updateLiveSettings(tabId, newSettings) {
     const isBoosted = (await getBoostedTabs()).has(tabId);
     if (!isBoosted) {
         await startBoostingTab(tabId);
-        try {
-            chrome.runtime.sendMessage({ type: 'BOOST_ACTIVATED', tabId: tabId });
-        } catch (e) { /* The popup might not be open, which is fine */ }
+        chrome.runtime.sendMessage({ type: 'BOOST_ACTIVATED', tabId: tabId }).catch(() => { /* The popup might not be open, which is fine */ });
     }
     else { await forwardMessageToOffscreen({ type: 'UPDATE_LIVE_SETTINGS', tabId, settings: newSettings }); updateBadge(tabId, newSettings.volume); }
 }
@@ -137,7 +135,7 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
     if ((await getBoostedTabs()).has(tabId)) {
         await removeBoostedTab(tabId);
         if (await hasOffscreenDocument()) {
-            try { forwardMessageToOffscreen({ type: 'REMOVE_GRAPH', tabId }); } catch (error) { /* Ignored */ }
+            forwardMessageToOffscreen({ type: 'REMOVE_GRAPH', tabId }).catch(() => {});
         }
     }
     await chrome.storage.session.remove(`tab_settings_${tabId}`);
@@ -175,7 +173,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
              const newUrl = new URL(newUrlString);
              if (oldUrl.origin !== newUrl.origin) {
                  fullscreenFrames.delete(tabId);
-                 try { forwardMessageToOffscreen({ type: 'REMOVE_GRAPH', tabId }); } catch (e) { /* Ignored */ }
+                 await forwardMessageToOffscreen({ type: 'REMOVE_GRAPH', tabId }).catch(() => {});
                  startBoostingTab(tabId);
                  return;
              }
@@ -209,11 +207,13 @@ async function handleMuteChange(tabId, isMuted) {
     if (settingsModified) {
         await chrome.storage.session.set({ [settingsKey]: settings });
         await updateLiveSettings(tabId, settings);
-        try { chrome.runtime.sendMessage({ type: 'SETTINGS_UPDATED', tabId: tabId, newSettings: settings }); } catch(e) {}
+        chrome.runtime.sendMessage({ type: 'SETTINGS_UPDATED', tabId: tabId, newSettings: settings }).catch(() => {});
     }
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    // The popup's analyzer polls the offscreen document ~60x/s; answering here raced its replies.
+    if (message.target === 'offscreen') return;
     if (['IM_IN_FULLSCREEN', 'IM_NOT_IN_FULLSCREEN', 'MEDIA_MUTED', 'MEDIA_UNMUTED', 'SPA_NAVIGATED'].includes(message.type)) {
         const tabId = message.tabId || sender.tab?.id;
         if (message.type === 'IM_IN_FULLSCREEN' && tabId && sender.frameId) fullscreenFrames.set(tabId, sender.frameId);
@@ -221,7 +221,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.type === 'MEDIA_MUTED' && sender.tab?.id) handleMuteChange(sender.tab.id, true);
         if (message.type === 'MEDIA_UNMUTED' && sender.tab?.id) handleMuteChange(sender.tab.id, false);
         if (message.type === 'SPA_NAVIGATED' && sender.tab?.id) {
-             chrome.tabs.sendMessage(sender.tab.id, { type: 'RE_OBSERVE_MEDIA' });
+             chrome.tabs.sendMessage(sender.tab.id, { type: 'RE_OBSERVE_MEDIA' }).catch(() => {});
         }
     } else {
         (async () => {
@@ -306,16 +306,12 @@ chrome.commands.onCommand.addListener(async (command) => {
         const boostedTabs = await getBoostedTabs();
         if (!boostedTabs.has(currentTab.id)) {
             await startBoostingTab(currentTab.id);
-            try {
-                chrome.runtime.sendMessage({ type: 'BOOST_ACTIVATED', tabId: currentTab.id });
-            } catch(e) { /* The popup might not be open, which is fine */ }
+            chrome.runtime.sendMessage({ type: 'BOOST_ACTIVATED', tabId: currentTab.id }).catch(() => { /* The popup might not be open, which is fine */ });
         }
 
         const settings = await getActiveSettingsForTab(currentTab.id, currentTab.url);
-        const { global_enable800Boost = true } = await chrome.storage.local.get('global_enable800Boost');
-        const maxVolume = global_enable800Boost ? 800 : 600;
         let newVolume = settings.volume + volumeChange;
-        newVolume = Math.max(0, Math.min(newVolume, maxVolume));
+        newVolume = Math.max(0, Math.min(newVolume, 600)); // same ceiling as the popup slider
 
         if (newVolume !== settings.volume) {
             settings.volume = newVolume;
@@ -328,9 +324,7 @@ chrome.commands.onCommand.addListener(async (command) => {
             } catch (err) {
                 if (!err.message.includes("Could not establish connection")) console.error("Error sending SHOW_VOLUME_HUD message:", err);
             }
-            try {
-                chrome.runtime.sendMessage({ type: 'SETTINGS_UPDATED', tabId: currentTab.id, newSettings: settings });
-            } catch(e) {}
+            chrome.runtime.sendMessage({ type: 'SETTINGS_UPDATED', tabId: currentTab.id, newSettings: settings }).catch(() => {});
         }
     } catch (error) {
         console.error(`Error in onCommand: ${error.message}`);

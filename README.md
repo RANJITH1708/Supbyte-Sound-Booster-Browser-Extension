@@ -1,6 +1,6 @@
 # Supbyte Sound Booster — Volume Booster Browser Extension
 
-[![Version](https://img.shields.io/badge/version-1.2.2-brightgreen)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.2.3-brightgreen)](manifest.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/intro/)
 [![Languages](https://img.shields.io/badge/Languages-10-orange)](_locales/)
@@ -15,7 +15,7 @@
 - **Per-site memory** — the extension remembers your preferred volume and EQ for each website automatically
 - **Real-time frequency analyzer** — live waveform visualizer shows the audio signal as you adjust
 - **Keyboard shortcuts** — step volume up or down by 10% without opening the popup
-- **Safety controls** — built-in limiter prevents clipping and distortion from excessive gain
+- **Device safety** — volume drops to a safe level when you switch output devices
 - **10 languages** — localized for EN, DE, ES, FR, IT, JA, KO, PT, RU, and ZH
 
 ## Keyboard Shortcuts
@@ -47,9 +47,8 @@ git clone https://github.com/RANJITH1708/Supbyte-Sound-Booster-Browser-Extension
 | `manifest.json` | Extension config — permissions, commands, locales (Manifest V3) |
 | `background.js` | Service worker — tab capture session management and routing |
 | `offscreen.js/html` | Offscreen audio graph — gain node, EQ filters, frequency analyzer |
-| `content.js/css` | Content script — page integration |
+| `content.js` | Content script — volume HUD and media mute detection |
 | `popup.html/css/js` | Main popup — volume slider, EQ selector, device picker, visualizer |
-| `bypass_processor.js` | AudioWorklet — zero-latency passthrough processor |
 | `keep-alive-processor.js` | AudioWorklet — prevents audio context suspension |
 | `_locales/` | i18n message strings for 10 languages |
 

@@ -74,12 +74,7 @@ function showVolumeHUD(volume, presetName) {
     const text = hudContainer.shadowRoot.querySelector('#supbyte-hud-text');
     const presetElem = hudContainer.shadowRoot.querySelector('#supbyte-hud-preset-name');
     
-    chrome.storage.local.get('global_enable800Boost', ({ global_enable800Boost }) => {
-        if (!chrome.runtime?.id) return;
-        const maxVolume = global_enable800Boost !== false ? 800 : 600;
-        const percentage = Math.max(0, Math.min(100, (volume / maxVolume) * 100));
-        if (bar) bar.style.width = `${percentage}%`;
-    });
+    if (bar) bar.style.width = `${Math.max(0, Math.min(100, (volume / 600) * 100))}%`;
     
     if (text) text.textContent = `${volume}%`;
     if (presetName && presetElem) {

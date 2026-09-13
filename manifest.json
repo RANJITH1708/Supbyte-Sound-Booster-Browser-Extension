@@ -1,9 +1,7 @@
 {
-"update_url": "https://clients2.google.com/service/update2/crx",
-
   "manifest_version": 3,
   "name": "Sound Booster up to 600%",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Amplify volume up to 600%, customize EQ presets, switch output devices per tab, with visualizers and shortcuts.",
   "default_locale": "en",
   "permissions": [
@@ -45,16 +43,5 @@
       },
       "description": "Decrease volume by 10%"
     }
-  },
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "bypass_processor.js",
-        "keep-alive-processor.js"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
-    }
-  ]
+  }
 }

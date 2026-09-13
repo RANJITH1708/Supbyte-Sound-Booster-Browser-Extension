@@ -48,4 +48,4 @@ Please include:
 
 - Plain JavaScript (no build step required)
 - Match the formatting of the existing files
-- AudioWorklet processors (`bypass_processor.js`, `keep-alive-processor.js`) must remain synchronous and allocation-free to avoid audio glitches
+- The AudioWorklet processor (`keep-alive-processor.js`) must remain synchronous and allocation-free to avoid audio glitches
